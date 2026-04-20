@@ -11,5 +11,5 @@ class Setup {
       : type = ConnectionType.values.byName(json['type'] as String),
         data = json['data'] as String;
 
-  Map<String, dynamic> toJson() => {'type': type.name: data};
+  Map<String, dynamic> toJson() => {'type': type.name ,'data': data};
 }
