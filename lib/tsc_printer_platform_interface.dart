@@ -1,5 +1,7 @@
+import 'dart:typed_data';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'package:tsc_printer/data/setup_model.dart';
 import 'tsc_printer_method_channel.dart';
 
 abstract class TscPrinterPlatform extends PlatformInterface {
@@ -25,5 +27,25 @@ abstract class TscPrinterPlatform extends PlatformInterface {
 
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
+  }
+
+  Future<bool> setup(Setup setup) {
+    throw UnimplementedError('setup() has not been implemented.');
+  }
+
+  Future<bool> connect() {
+    throw UnimplementedError('connect() has not been implemented.');
+  }
+
+  Future<bool> disconnect() {
+    throw UnimplementedError('disconnect() has not been implemented.');
+  }
+
+  Future<bool> isConnected() {
+    throw UnimplementedError('isConnected() has not been implemented.');
+  }
+
+  Future<bool> printData(Uint8List data) {
+    throw UnimplementedError('printData() has not been implemented.');
   }
 }

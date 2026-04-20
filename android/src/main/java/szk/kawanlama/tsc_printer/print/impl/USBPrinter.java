@@ -43,7 +43,7 @@ public class USBPrinter implements IPrinter {
 
     @Override
     public boolean connect() {
-        sdk.openport(manager, device);
-        return false;
+        String result = sdk.openport(manager, device);
+        return result != "-1";
     }
 }

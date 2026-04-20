@@ -10,6 +10,12 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -71,7 +77,36 @@ public class TscPrinterPlugin implements FlutterPlugin, MethodCallHandler {
               return;
             }
 
-            printer = new USBPrinter(usbManager, usbDevice);
+            final UsbDevice finalUsbDevice = usbDevice;
+            final UsbManager finalUsbManager = usbManager;
+
+            if (!finalUsbManager.hasPermission(finalUsbDevice)) {
+                String ACTION_USB_PERMISSION = "com.tsc_printer.USB_PERMISSION";
+                int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
+                PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), flags);
+                IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+                BroadcastReceiver usbReceiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        context.unregisterReceiver(this);
+                        if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                            printer = new USBPrinter(finalUsbManager, finalUsbDevice);
+                            result.success(true);
+                        } else {
+                            result.error("PERMISSION_DENIED", "USB Permission denied by user.", "");
+                        }
+                    }
+                };
+                if (Build.VERSION.SDK_INT >= 33) {
+                    context.registerReceiver(usbReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+                } else {
+                    context.registerReceiver(usbReceiver, filter);
+                }
+                finalUsbManager.requestPermission(finalUsbDevice, permissionIntent);
+                return; // Wait for broadcast to reply with result.success
+            } else {
+                printer = new USBPrinter(finalUsbManager, finalUsbDevice);
+            }
             break;
           case wifi:
             printer = new WiFiPrinter(setup.data);
@@ -95,8 +130,14 @@ public class TscPrinterPlugin implements FlutterPlugin, MethodCallHandler {
         result.success(printer.isConnected());
         break;
       case PluginFunction.PRINT:
-        Bitmap img = printer.generateImage(call.argument("data"));
-        printer.print(img);
+          try {
+              if (!printer.isConnected()) throw new Exception("printer is not connected");
+              Bitmap img = printer.generateImage(call.argument("data"));
+              printer.print(img);
+              result.success(true);
+          } catch (Exception e) {
+              result.success(false);
+          }
         break;
       default:
         result.notImplemented();
