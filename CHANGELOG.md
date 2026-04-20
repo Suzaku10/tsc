@@ -1,3 +1,8 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+- Initial release of the TSC Printer plugin.
+- Implemented core printing functionality via the TSC Android SDK.
+- Added support for USB and WiFi connection types.
+- Integrated USB permission handling for a smoother user experience.
+- Basic framework for Bluetooth and Windows support.
+
