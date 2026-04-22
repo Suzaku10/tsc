@@ -1,6 +1,6 @@
 name: tsc_printer
 description: "Porting Printer Label for TSC Manufacturer using their SDK"
-version: 0.0.1
+version: 0.0.2
 homepage:
 
 environment:
