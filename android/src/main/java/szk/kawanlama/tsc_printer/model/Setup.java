@@ -8,6 +8,7 @@ import szk.kawanlama.tsc_printer.consts.ConnectionType;
 public class Setup {
     public ConnectionType type;
     public String data;
+    public PaperSetup paperSetup;
 
     public Setup() {}
 
@@ -25,6 +26,10 @@ public class Setup {
 
         if (json.get("data") != null) {
             setup.data = (String) json.get("data");
+        }
+
+        if (json.get("paperSetup") != null) {
+            setup.paperSetup = PaperSetup.fromJson((Map<String, Object>) json.get("paperSetup"));
         }
 
         return setup;

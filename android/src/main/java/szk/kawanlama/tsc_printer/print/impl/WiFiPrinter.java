@@ -14,8 +14,21 @@ public class WiFiPrinter implements IPrinter {
         this.ip = ip;
     }
 
+    private szk.kawanlama.tsc_printer.model.PaperSetup paperSetup;
+
+    @Override
+    public void setPaperSetup(szk.kawanlama.tsc_printer.model.PaperSetup paperSetup) {
+        if (paperSetup != null) {
+            this.paperSetup = paperSetup;
+        }
+    }
+
     @Override
     public void print(Bitmap img) {
+        if (paperSetup != null) {
+            sdk.setup(paperSetup.width, paperSetup.height, paperSetup.speed, paperSetup.density, paperSetup.sensor, paperSetup.sensorDistance, paperSetup.sensorOffset);
+        }
+        
         sdk.clearbuffer();
         sdk.sendbitmap(0,0, img);
         sdk.printlabel(1,1);

@@ -91,6 +91,7 @@ public class TscPrinterPlugin implements FlutterPlugin, MethodCallHandler {
                         context.unregisterReceiver(this);
                         if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                             printer = new USBPrinter(finalUsbManager, finalUsbDevice);
+                            if (setup.paperSetup != null) printer.setPaperSetup(setup.paperSetup);
                             result.success(true);
                         } else {
                             result.error("PERMISSION_DENIED", "USB Permission denied by user.", "");
@@ -106,14 +107,17 @@ public class TscPrinterPlugin implements FlutterPlugin, MethodCallHandler {
                 return; // Wait for broadcast to reply with result.success
             } else {
                 printer = new USBPrinter(finalUsbManager, finalUsbDevice);
+                if (setup.paperSetup != null) printer.setPaperSetup(setup.paperSetup);
             }
             break;
           case wifi:
             printer = new WiFiPrinter(setup.data);
+            if (setup.paperSetup != null) printer.setPaperSetup(setup.paperSetup);
             break;
           case bluetooth:
             // TODO: Ensure to implement your BluetoothPrinter logic here
             printer = new WiFiPrinter(setup.data);
+            if (setup.paperSetup != null) printer.setPaperSetup(setup.paperSetup);
             break;
         }
         result.success(true);
