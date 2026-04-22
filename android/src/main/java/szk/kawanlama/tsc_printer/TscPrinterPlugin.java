@@ -60,6 +60,7 @@ public class TscPrinterPlugin implements FlutterPlugin, MethodCallHandler {
             UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
             HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
             UsbDevice usbDevice = null;
+            UsbDevice firstTscDevice = null;
             
             // Common TSC vendor ID is 4611 (0x1203 in Hex)
             int TSC_VENDOR_ID = 4611;
@@ -67,9 +68,28 @@ public class TscPrinterPlugin implements FlutterPlugin, MethodCallHandler {
             // Getting the USB device that matches the TSC vendor ID to determine the manufacturer
             for (UsbDevice device : deviceList.values()) {
                 if (device.getVendorId() == TSC_VENDOR_ID) {
-                    usbDevice = device;
-                    break;
+                    if (setup.data != null && !setup.data.isEmpty()) {
+                        String deviceIdStr = String.valueOf(device.getDeviceId());
+                        // Android device names are typically like /dev/bus/usb/001/002
+                        // Using contains allows matching with inputs like "usb/002" 
+                        if (device.getDeviceName().contains(setup.data) || deviceIdStr.equals(setup.data)) {
+                            usbDevice = device;
+                            break;
+                        }
+                    } else {
+                        usbDevice = device;
+                        break;
+                    }
+
+                    if (firstTscDevice == null) {
+                        firstTscDevice = device; // Keep track of the first available TSC printer
+                    }
                 }
+            }
+
+            // Fallback: If setup.data was provided but was incorrect, point to the very first matching TSC device we found
+            if (usbDevice == null && firstTscDevice != null) {
+                usbDevice = firstTscDevice;
             }
 
             if (usbDevice == null) {
