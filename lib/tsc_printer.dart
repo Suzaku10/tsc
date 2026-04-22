@@ -4,6 +4,7 @@ import 'tsc_printer_platform_interface.dart';
 
 export 'package:tsc_printer/constant/enum_consts.dart';
 export 'package:tsc_printer/data/setup_model.dart';
+export 'package:tsc_printer/data/paper_setup.dart';
 
 class TscPrinter {
   Future<String?> getPlatformVersion() {

@@ -14,7 +14,8 @@ class MethodChannelTscPrinter extends TscPrinterPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>(FunctionConsts.getPlatformVersion);
+    final version = await methodChannel
+        .invokeMethod<String>(FunctionConsts.getPlatformVersion);
     return version;
   }
 
@@ -27,25 +28,29 @@ class MethodChannelTscPrinter extends TscPrinterPlatform {
 
   @override
   Future<bool> connect() async {
-    final result = await methodChannel.invokeMethod<bool>(FunctionConsts.connect);
+    final result =
+        await methodChannel.invokeMethod<bool>(FunctionConsts.connect);
     return result ?? false;
   }
 
   @override
   Future<bool> disconnect() async {
-    final result = await methodChannel.invokeMethod<bool>(FunctionConsts.disconnect);
+    final result =
+        await methodChannel.invokeMethod<bool>(FunctionConsts.disconnect);
     return result ?? false;
   }
 
   @override
   Future<bool> isConnected() async {
-    final result = await methodChannel.invokeMethod<bool>(FunctionConsts.isConnected);
+    final result =
+        await methodChannel.invokeMethod<bool>(FunctionConsts.isConnected);
     return result ?? false;
   }
 
   @override
   Future<bool> printData(Uint8List data) async {
-    final result = await methodChannel.invokeMethod<bool>(FunctionConsts.print, {'data': data});
+    final result = await methodChannel
+        .invokeMethod<bool>(FunctionConsts.print, {'data': data});
     return result ?? false;
   }
 }

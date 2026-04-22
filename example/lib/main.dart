@@ -21,7 +21,14 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _setupPrinter() async {
     try {
-      final result = await _tscPrinterPlugin.setup(Setup(type: ConnectionType.usb, data: ''));
+      final result = await _tscPrinterPlugin.setup(Setup(
+        type: ConnectionType.usb,
+        data: '',
+        paperSetup: PaperSetup(
+          width: 50,
+          height: 30,
+        ),
+      ));
       setState(() => _status = result ? 'Setup Successful' : 'Setup Failed');
     } catch (e) {
       setState(() => _status = 'Error setting up: $e');
@@ -40,7 +47,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _checkConnection() async {
     try {
       final result = await _tscPrinterPlugin.isConnected();
-      setState(() => _status = result ? 'Printer is Connected' : 'Printer is Disconnected');
+      setState(() => _status =
+          result ? 'Printer is Connected' : 'Printer is Disconnected');
     } catch (e) {
       setState(() => _status = 'Error checking connection: $e');
     }
@@ -49,7 +57,7 @@ class _MyAppState extends State<MyApp> {
   Future<Uint8List> _createTextImage(String text) async {
     final recorder = ui.PictureRecorder();
     final canvas = ui.Canvas(recorder);
-    
+
     // Draw white background
     final paint = Paint()..color = Colors.white;
     canvas.drawRect(const Rect.fromLTWH(0, 0, 400, 200), paint);
@@ -58,7 +66,8 @@ class _MyAppState extends State<MyApp> {
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
-        style: const TextStyle(color: Colors.black, fontSize: 40, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+            color: Colors.black, fontSize: 40, fontWeight: FontWeight.bold),
       ),
       textDirection: TextDirection.ltr,
     );
@@ -75,11 +84,12 @@ class _MyAppState extends State<MyApp> {
     try {
       setState(() => _status = 'Generating image...');
       final imageBytes = await _createTextImage("Hello TSC Printer!");
-      
+
       setState(() => _status = 'Printing...');
       final success = await _tscPrinterPlugin.printData(imageBytes);
-      
-      setState(() => _status = success ? 'Print Successful!' : 'Print Failed: Ensure connected');
+
+      setState(() => _status =
+          success ? 'Print Successful!' : 'Print Failed: Ensure connected');
     } catch (e) {
       setState(() => _status = 'Error printing: $e');
     }
@@ -107,7 +117,9 @@ class _MyAppState extends State<MyApp> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Status: $_status', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text('Status: $_status',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _setupPrinter,
